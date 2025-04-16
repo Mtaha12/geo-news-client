@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
 // Register chart elements
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+// ✅ Use environment variable
+const API_URL = process.env.REACT_APP_API_URL;
 
 function App() {
   const [news, setArticles] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('http://localhost:5000/api/articles');
-      const data = await res.json();
-      console.log('Fetched Data:', data); 
-      setArticles(data);
+      try {
+        const res = await fetch(`${API_URL}/api/articles`);
+        const data = await res.json();
+        console.log('Fetched Data:', data);
+        setArticles(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
     fetchData();
   }, []);
-  
+
   const chartData = {
     labels: news.map((n, i) => `News ${i + 1}`),
     datasets: [
       {
         label: "Total Articles",
         data: news.map((_, i) => i + 1),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)', 
-        borderColor: 'rgba(75, 192, 192, 1)',     
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 2,
         hoverBackgroundColor: 'rgba(75, 192, 192, 1)',
         hoverBorderColor: 'rgba(75, 192, 192, 1)',
@@ -78,7 +93,7 @@ function App() {
           color: '#333',
         },
         grid: {
-          display: false, // Hide x-axis grid 
+          display: false,
         },
       },
       y: {
@@ -92,7 +107,7 @@ function App() {
           color: '#333',
         },
         grid: {
-          color: '#ddd', // Light grid lines 
+          color: '#ddd',
         },
         ticks: {
           beginAtZero: true,
@@ -110,8 +125,12 @@ function App() {
       </div>
       <ul className="mt-8 space-y-4">
         {news.map((item, idx) => (
-          <li key={idx} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-            <strong className="text-xl text-gray-800">{item.time}</strong> - <span className="text-lg text-gray-600">{item.title}</span>
+          <li
+            key={idx}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+          >
+            <strong className="text-xl text-gray-800">{item.time}</strong> -{' '}
+            <span className="text-lg text-gray-600">{item.title}</span>
           </li>
         ))}
       </ul>
