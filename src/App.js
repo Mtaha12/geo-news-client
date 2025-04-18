@@ -14,31 +14,30 @@ import {
 // Register chart elements
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-// ✅ Use environment variable
-const API_URL = process.env.REACT_APP_API_URL;
-
 function App() {
   const [news, setArticles] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/articles`);
+        const res = await fetch(
+          'https://geo-news-server-production.up.railway.app/api/articles'
+        );
         const data = await res.json();
         console.log('Fetched Data:', data);
         setArticles(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } catch (err) {
+        console.error('Failed to fetch data:', err);
       }
     };
     fetchData();
   }, []);
 
   const chartData = {
-    labels: news.map((n, i) => `News ${i + 1}`),
+    labels: news.map((_, i) => `News ${i + 1}`),
     datasets: [
       {
-        label: "Total Articles",
+        label: 'Total Articles',
         data: news.map((_, i) => i + 1),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
@@ -119,7 +118,9 @@ function App() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">Geo News Visualizer</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">
+        Geo News Visualizer
+      </h1>
       <div className="relative h-80">
         <Bar data={chartData} options={chartOptions} />
       </div>
